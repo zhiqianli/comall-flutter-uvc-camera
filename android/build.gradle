@@ -22,9 +22,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        flatDir {
-            dirs "${projectDir}/libs"
-        }
     }
 }
 
@@ -63,12 +60,11 @@ android {
 
     dependencies {
         implementation 'androidx.appcompat:appcompat:1.6.1'
-        implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
         implementation 'com.android.support.constraint:constraint-layout:2.0.4'
         implementation 'com.google.code.gson:gson:2.8.8'
-        implementation(name: 'libausbc', ext: 'aar')
-        implementation(name: 'libuvc', ext: 'aar')
-        implementation(name: 'libnative', ext: 'aar')
+        // Use JAR files instead of AAR to avoid "Direct local .aar file dependencies" error
+        implementation fileTree(dir: 'libs/jars', include: ['*.jar'])
     }
 
     lintOptions {
