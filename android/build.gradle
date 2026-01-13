@@ -22,6 +22,9 @@ allprojects {
         google()
         mavenCentral()
         maven { url "https://jitpack.io" }
+        flatDir {
+            dirs "${projectDir}/libs"
+        }
     }
 }
 
@@ -36,12 +39,6 @@ android {
         enabled = true
     }
     compileSdk 34
-
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
