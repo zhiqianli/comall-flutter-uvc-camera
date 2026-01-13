@@ -56,6 +56,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     dependencies {
@@ -65,6 +66,10 @@ android {
         implementation 'com.google.code.gson:gson:2.8.8'
         // Use JAR files instead of AAR to avoid "Direct local .aar file dependencies" error
         implementation fileTree(dir: 'libs/jars', include: ['*.jar'])
+        // Add XLog dependency required by libausbc
+        implementation 'com.elvishew:xlog:1.11.0'
+        // Add Material Components for BottomSheet and other Material Design attributes
+        implementation 'com.google.android.material:material:1.11.0'
     }
 
     lintOptions {
