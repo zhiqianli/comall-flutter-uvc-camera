@@ -37,6 +37,12 @@ android {
     }
     compileSdk 34
 
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -59,15 +65,13 @@ android {
     }
 
     dependencies {
-        // implementation 'com.github.chenyeju295.AndroidUSBCamera:libausbc:3.3.6'
-        // implementation 'com.github.chenyeju295.AndroidUSBCamera:libuvc:3.3.6'
         implementation 'androidx.appcompat:appcompat:1.6.1'
-        implementation fileTree(dir: 'libs', include: ['*.jar'])
+        implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
         implementation 'com.android.support.constraint:constraint-layout:2.0.4'
         implementation 'com.google.code.gson:gson:2.8.8'
-        implementation project(":libausbc")
-        implementation project(":libuvc")
-        implementation project(":libnative")
+        implementation(name: 'libausbc', ext: 'aar')
+        implementation(name: 'libuvc', ext: 'aar')
+        implementation(name: 'libnative', ext: 'aar')
     }
 
     lintOptions {

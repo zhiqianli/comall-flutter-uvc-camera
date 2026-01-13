@@ -15,7 +15,7 @@ pub：[flutter_uvc_camera](https://pub.dev/packages/flutter_uvc_camera)
 - Monitor camera connection status
 - Support for different preview resolutions
 
-## Limitations 
+## Limitations
 
 - Currently, only supports Android
 - For Android 10+, you may need to reduce targetSdkVersion to 27
@@ -137,7 +137,7 @@ class _CameraScreenState extends State<CameraScreen> {
   void initState() {
     super.initState();
     cameraController = UVCCameraController();
-    
+
     // Set up camera state callback
     cameraController.cameraStateCallback = (state) {
       setState(() {
@@ -164,11 +164,11 @@ class _CameraScreenState extends State<CameraScreen> {
             height: 300,
             child: UVCCameraView(
               cameraController: cameraController,
-              width: 300, 
+              width: 300,
               height: 300,
             ),
           ),
-          
+
           // Camera control buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -316,9 +316,59 @@ For a complete example, check the [example project](https://github.com/chenyeju2
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## For Developers: Building Native Libraries
+
+This plugin includes pre-built AAR files for the native Android libraries (`libausbc`, `libuvc`, `libnative`). If you need to modify these libraries or rebuild them:
+
+### Prerequisites
+
+- Java 17 or higher (configure in `android/gradle.properties`)
+- Android SDK 34
+- NDK for native code compilation
+
+### Rebuild AAR Files
+
+1. Navigate to the android directory:
+
+```bash
+cd android
+```
+
+2. Build each library:
+
+```bash
+./gradlew :libausbc:assembleRelease
+./gradlew :libuvc:assembleRelease
+./gradlew :libnative:assembleRelease
+```
+
+3. Copy the generated AAR files to the libs directory:
+
+```bash
+cp libausbc/build/outputs/aar/libausbc-release.aar libs/libausbc.aar
+cp libuvc/build/outputs/aar/libuvc-release.aar libs/libuvc.aar
+cp libnative/build/outputs/aar/libnative-release.aar libs/libnative.aar
+```
+
+4. Update the plugin version in `pubspec.yaml` to release the changes
+5. IF error,please set java version
+
+   ```
+   org.gradle.java.home=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+
+   ```
+
+6. change version in pubspec.yaml ,push to github,and add tag
+
+```
+git tag v1.0.0
+git push origin main v1.0.0
+```
+
+### Note
+
+Version management is handled through the plugin version number in `pubspec.yaml`, not through AAR filenames. When you update the native libraries, simply bump the plugin version and users will get the updated AARs when they upgrade.
+
 ## Issue Reporting
 
 If you encounter any problems or have any suggestions during usage, please report them on [GitHub Issues](https://github.com/chenyeju295/flutter_uvc_camera/issues).
-
-
-
