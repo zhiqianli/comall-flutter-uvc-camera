@@ -1,17 +1,15 @@
-<manifest package="com.chenyeju">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.chenyeju">
     <!-- USB camera permissions -->
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.permission.USB_PERMISSION" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <!-- USB device filter for UVC cameras -->
     <intent-filter>
         <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
     </intent-filter>
 
-    <!-- Meta-data for USB device filter (optional, for specific devices) -->
-    <!--
-    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-               android:resource="@xml/device_filter" />
-    -->
+   
+
+
+    
 </manifest>
