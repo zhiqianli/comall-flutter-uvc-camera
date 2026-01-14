@@ -395,7 +395,7 @@ include ':libnative'
 1. 创建临时解压目录
 2. 解压三个 AAR 文件
 3. 提取 JAR 文件到 `libs/jars/`：
-   - `libausbc.jar` (约 424KB) - 包含相机控制、渲染等 Java/Kotlin 代码
+   - `libausbc.jar` (约 431KB) - 包含相机控制、渲染等 Java/Kotlin 代码
    - `libuvc.jar` (约 86KB) - 包含 USB 设备通信 Java 代码
    - `libnative.jar` (约 2.4KB) - 包含原生方法接口
 
@@ -415,9 +415,14 @@ include ':libnative'
    - `values/colors.xml` - 颜色定义
    - `values/strings.xml` - 字符串资源
    - `layout/*.xml` - 布局文件
-   - `raw/*.xml` - USB 设备过滤等配置
+   - `raw/*.glsl` - OpenGL 着色器文件
 
-6. 清理临时文件
+6. **生成并注入 R 类到 libausbc.jar（重要）**：
+   - 问题原因：libausbc 代码引用了 `com.jiangdg.ausbc.R` 类，但 JAR 文件不包含 R 类
+   - 解决方案：脚本会自动生成包含占位符资源 ID 的 R 类并注入到 libausbc.jar
+   - 这修复了运行时的 `NoClassDefFoundError: com.jiangdg.ausbc.R$raw` 崩溃问题
+
+7. 清理临时文件
 
 **手动提取方式（如需自定义）：**
 
@@ -552,7 +557,34 @@ flutter build apk --release
 
 ### 常见问题排查
 
-#### 1. 编译错误：找不到模块
+#### 1. 运行时崩溃：找不到 R 类
+
+```
+java.lang.NoClassDefFoundError: Failed resolution of: Lcom/jiangdg/ausbc/R$raw;
+Caused by: java.lang.ClassNotFoundException: com.jiangdg.ausbc.R$raw
+at com.jiangdg.ausbc.render.internal.ScreenRender.getVertexSourceId
+```
+
+**问题原因**：libausbc 代码引用了 `com.jiangdg.ausbc.R` 类，但 JAR 文件不包含 R 类（R 类是在编译时由 Android 构建工具从 res/ 目录生成的）。
+
+**解决方案**：`extract_aars.sh` 脚本会自动生成并注入 R 类到 libausbc.jar。如果你手动提取了 JAR，需要手动执行 R 类注入：
+
+```bash
+# 创建临时目录
+mkdir -p temp_r/com/jiangdg/ausbc
+
+# 创建 R.java（同脚本中的内容）
+# ... （参见 extract_aars.sh 中的 R.java 定义）
+
+# 编译并注入
+javac -d temp_r temp_r/R.java
+jar uf libs/jars/libausbc.jar -C temp_r com/jiangdg/ausbc/R*.class
+
+# 清理
+rm -rf temp_r
+```
+
+#### 2. 编译错误：找不到模块
 
 ```
 Cannot locate tasks that match ':libausbc:assembleRelease' as project 'libausbc' not found
@@ -560,7 +592,7 @@ Cannot locate tasks that match ':libausbc:assembleRelease' as project 'libausbc'
 
 **解决方案**：检查 `android/settings.gradle` 是否包含了三个模块。
 
-#### 2. 资源文件冲突
+#### 3. 资源文件冲突
 
 ```
 ERROR: resource color/common_30_black not found
@@ -568,7 +600,7 @@ ERROR: resource color/common_30_black not found
 
 **解决方案**：确保 `extract_aars.sh` 脚本正确复制了资源文件到 `src/main/res/`。
 
-#### 3. Java 版本不兼容
+#### 4. Java 版本不兼容
 
 ```
 Java version 1.8 is not supported
@@ -579,7 +611,7 @@ Java version 1.8 is not supported
 org.gradle.java.home=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
 ```
 
-#### 4. NDK 版本问题
+#### 5. NDK 版本问题
 
 ```
 NDK version mismatch
@@ -590,7 +622,7 @@ NDK version mismatch
 ndkVersion '27.0.12077973'
 ```
 
-#### 5. 原生库架构不匹配
+#### 6. 原生库架构不匹配
 
 如果应用在某些设备上崩溃，检查是否包含了正确的架构：
 - **推荐**: `arm64-v8a` 和 `armeabi-v7a`（覆盖大多数真机）
