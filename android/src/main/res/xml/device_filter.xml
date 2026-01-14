@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- USB Camera Device Filter -->
+    <!-- Vendor ID: 13030 (0x32D6) - Wed Camera -->
+    <usb-device vendor-id="13030" />
+
+    <!-- Common UVC Camera Vendor IDs for broader compatibility -->
+    <!-- Logitech -->
+    <usb-device vendor-id="1133" />
+    <!-- Microsoft -->
+    <usb-device vendor-id="1118" />
+    <!-- Realtek -->
+    <usb-device vendor-id="5326" />
+    <!-- SunplusIT -->
+    <usb-device vendor-id="2871" />
+    <!-- Microdia -->
+    <usb-device vendor-id="1525" />
+    <!-- Generic UVC class filter (class=239, subclass=2) is not supported in XML -->
+</resources>
